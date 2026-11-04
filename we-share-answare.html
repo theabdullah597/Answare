@@ -1,0 +1,929 @@
+<!--
+  ============================================================================
+  WE SHARE — Answare  |  Single-file landing page (glass / liquid-glass style)
+  ============================================================================
+  HOW TO EDIT THE LINKS (download button, Instagram, email):
+  Scroll down to the <script> tag near the bottom of this file and find the
+  block that starts with:  const CONFIG = {
+  Change the values there. That is the ONLY place you need to touch.
+
+  HOW TO USE ON BLOGGER:
+  Blogger > Layout > Add a Gadget > HTML/JavaScript > paste this whole file
+  into the content box. (Or Theme > Edit HTML if you want it as a full page.)
+  ============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WE SHARE — by Answare</title>
+<meta name="description" content="WE SHARE: send files between your PC and any Android or iPhone over WiFi or Bluetooth. No app install, no account, no internet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ==========================================================
+     TOKENS
+     ========================================================== */
+  :root{
+    --bg:#0b0c0f;
+    --bg-soft:#111318;
+    --glass-bg: rgba(255,255,255,0.055);
+    --glass-bg-strong: rgba(255,255,255,0.09);
+    --glass-border: rgba(255,255,255,0.14);
+    --glass-highlight: rgba(255,255,255,0.4);
+    --text-1:#f6f6f2;
+    --text-2: rgba(246,246,242,0.66);
+    --text-3: rgba(246,246,242,0.44);
+    --accent:#ffd400;
+    --accent-2:#ffe066;
+    --ink-on-accent:#15140c;
+    --shadow: 0 24px 70px rgba(0,0,0,0.5);
+    --blur:22px;
+    --radius-lg:26px;
+    --radius-md:18px;
+    --radius-sm:12px;
+    --focus: 0 0 0 3px rgba(255,212,0,0.55);
+    color-scheme: dark;
+  }
+
+  html[data-theme="light"]{
+    --bg:#f3f3ef;
+    --bg-soft:#ffffff;
+    --glass-bg: rgba(255,255,255,0.55);
+    --glass-bg-strong: rgba(255,255,255,0.75);
+    --glass-border: rgba(20,20,15,0.10);
+    --glass-highlight: rgba(255,255,255,0.9);
+    --text-1:#15140c;
+    --text-2: rgba(21,20,12,0.68);
+    --text-3: rgba(21,20,12,0.46);
+    --accent:#e3ab00;
+    --accent-2:#f0c23a;
+    --ink-on-accent:#15140c;
+    --shadow: 0 24px 60px rgba(20,20,15,0.14);
+    color-scheme: light;
+  }
+
+  html[data-theme="contrast"]{
+    --bg:#000000;
+    --bg-soft:#000000;
+    --glass-bg:#000000;
+    --glass-bg-strong:#000000;
+    --glass-border:#ffe400;
+    --glass-highlight: transparent;
+    --text-1:#ffffff;
+    --text-2:#ffffff;
+    --text-3:#ffffff;
+    --accent:#ffe400;
+    --accent-2:#ffe400;
+    --ink-on-accent:#000000;
+    --shadow:none;
+    --blur:0px;
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text-1);
+    font-family:'Inter', -apple-system, "Segoe UI", "Noto Naskh Arabic", "Noto Nastaliq Urdu", "Noto Sans Devanagari", "Noto Sans SC", sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    transition: background 0.35s ease, color 0.35s ease;
+  }
+
+  html[dir="rtl"] body{ direction:rtl; }
+
+  h1,h2,h3{
+    font-family:'Sora', 'Inter', sans-serif;
+    letter-spacing:-0.01em;
+    margin:0;
+    color:var(--text-1);
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  ul{ margin:0; padding:0; list-style:none; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  :focus-visible{ outline:none; box-shadow:var(--focus); border-radius:8px; }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 28px; }
+
+  /* ==========================================================
+     BACKGROUND DECOR
+     ========================================================== */
+  .bg-decor{
+    position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;
+  }
+  .bg-decor span{
+    position:absolute; border-radius:50%; filter:blur(90px); opacity:0.35;
+  }
+  .bg-decor span:nth-child(1){ width:520px;height:520px; background:var(--accent); top:-180px; left:-140px; opacity:0.18;}
+  .bg-decor span:nth-child(2){ width:420px;height:420px; background:#7fa1ff; top:220px; right:-160px; opacity:0.10;}
+  .bg-decor span:nth-child(3){ width:380px;height:380px; background:var(--accent); bottom:-160px; left:30%; opacity:0.10;}
+  html[data-theme="contrast"] .bg-decor{ display:none; }
+
+  /* ==========================================================
+     GLASS
+     ========================================================== */
+  .glass{
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+    backdrop-filter: blur(var(--blur)) saturate(160%);
+    box-shadow:var(--shadow);
+    position:relative;
+    border-radius:var(--radius-lg);
+  }
+  .glass::before{
+    content:"";
+    position:absolute; inset:0 0 auto 0; height:1px;
+    background:linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+  }
+  html[data-theme="contrast"] .glass{ border-width:2px; }
+  html[data-theme="contrast"] .glass::before{ display:none; }
+
+  /* ==========================================================
+     HEADER
+     ========================================================== */
+  .site-header{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:20px; padding:14px 28px; margin:14px 14px 0;
+    border-radius:20px;
+  }
+  html[data-theme="contrast"] .site-header{ position:static; }
+
+  .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .brand-mark{
+    width:38px; height:38px; border-radius:11px; flex:none;
+    background:linear-gradient(155deg, var(--accent), var(--accent-2));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(255,212,0,0.35);
+  }
+  html[data-theme="contrast"] .brand-mark{ box-shadow:none; border:2px solid #fff; }
+  .brand-mark svg{ width:20px; height:20px; }
+  .brand-text{ display:flex; flex-direction:column; line-height:1.1; min-width:0; }
+  .brand-name{ font-family:'Sora',sans-serif; font-weight:800; font-size:16px; letter-spacing:-0.01em; }
+  .brand-by{ font-size:11px; color:var(--text-3); }
+
+  .main-nav{ display:flex; align-items:center; gap:28px; }
+  .main-nav a{ font-size:14.5px; font-weight:500; color:var(--text-2); transition:color .2s ease; white-space:nowrap;}
+  .main-nav a:hover{ color:var(--text-1); }
+
+  .controls{ display:flex; align-items:center; gap:12px; }
+
+  .theme-switch{
+    display:flex; align-items:center; gap:2px; padding:4px;
+    border-radius:999px; border:1px solid var(--glass-border);
+    background:var(--glass-bg-strong);
+  }
+  .theme-switch button{
+    width:30px; height:30px; border-radius:999px; border:none; background:transparent;
+    color:var(--text-2); display:flex; align-items:center; justify-content:center;
+    font-size:14px; transition: background .2s ease, color .2s ease;
+  }
+  .theme-switch button[aria-pressed="true"]{ background:var(--accent); color:var(--ink-on-accent); }
+  html[data-theme="contrast"] .theme-switch button[aria-pressed="true"]{ outline:2px solid #fff; }
+
+  #langSelect{
+    appearance:none; -webkit-appearance:none;
+    border:1px solid var(--glass-border); background:var(--glass-bg-strong);
+    color:var(--text-1); font-size:13px; font-weight:600; padding:8px 30px 8px 14px;
+    border-radius:999px; cursor:pointer;
+    background-image: linear-gradient(45deg, transparent 50%, var(--text-2) 50%), linear-gradient(135deg, var(--text-2) 50%, transparent 50%);
+    background-position: calc(100% - 16px) 55%, calc(100% - 11px) 55%;
+    background-size: 5px 5px, 5px 5px; background-repeat:no-repeat;
+  }
+  html[dir="rtl"] #langSelect{
+    padding:8px 14px 8px 30px;
+    background-position: 16px 55%, 11px 55%;
+  }
+
+  .nav-toggle{ display:none; width:38px;height:38px; border-radius:10px; border:1px solid var(--glass-border); background:var(--glass-bg-strong); color:var(--text-1); }
+
+  /* ==========================================================
+     HERO
+     ========================================================== */
+  .hero{
+    display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;
+    padding:96px 28px 70px; max-width:1180px; margin:0 auto;
+  }
+  .hero-copy h1{ font-size:clamp(34px, 4.6vw, 56px); font-weight:800; line-height:1.06; }
+  .hero-copy p{ margin-top:22px; font-size:17px; color:var(--text-2); max-width:52ch; }
+  .hero-actions{ display:flex; align-items:center; gap:14px; margin-top:34px; flex-wrap:wrap; }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:10px; justify-content:center;
+    padding:14px 24px; border-radius:999px; font-weight:700; font-size:15px;
+    border:1px solid transparent; transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    white-space:nowrap;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{ background:var(--accent); color:var(--ink-on-accent); box-shadow:0 14px 34px rgba(255,212,0,0.30); }
+  .btn-primary:hover{ box-shadow:0 18px 42px rgba(255,212,0,0.42); }
+  html[data-theme="contrast"] .btn-primary{ box-shadow:none; border:2px solid #fff; }
+  .btn-ghost{ background:var(--glass-bg-strong); color:var(--text-1); border-color:var(--glass-border); }
+  .btn-ghost:hover{ background:var(--glass-bg); }
+  .btn-lg{ padding:17px 34px; font-size:16px; }
+
+  .hero-visual{ height:380px; padding:26px; overflow:hidden; }
+  .hero-visual svg{ width:100%; height:100%; display:block; }
+
+  .beam-dash{ stroke-dasharray:6 10; animation:dashmove 2.4s linear infinite; }
+  .pulse-dot{ animation:pulse 2.4s ease-in-out infinite; transform-origin:center; }
+  @keyframes dashmove{ to{ stroke-dashoffset:-160; } }
+  @keyframes pulse{ 0%,100%{ opacity:.25; transform:scale(0.9);} 50%{ opacity:1; transform:scale(1.15);} }
+
+  /* ==========================================================
+     STEPS
+     ========================================================== */
+  .steps{ padding:10px 28px 90px; max-width:1180px; margin:0 auto; }
+  .steps h2{ font-size:26px; font-weight:800; margin-bottom:34px; text-align:center; }
+  .steps-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .step-card{ padding:26px 24px; border-radius:var(--radius-md); }
+  .step-num{
+    width:34px;height:34px; border-radius:10px; background:var(--accent); color:var(--ink-on-accent);
+    display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; margin-bottom:16px;
+  }
+  html[data-theme="contrast"] .step-num{ border:2px solid #fff; }
+  .step-card h3{ font-size:16.5px; font-weight:700; margin-bottom:8px; }
+  .step-card p{ margin:0; font-size:14.5px; color:var(--text-2); }
+
+  /* ==========================================================
+     FEATURES
+     ========================================================== */
+  .features{ padding:20px 28px 100px; max-width:1180px; margin:0 auto; }
+  .section-head{ max-width:640px; margin:0 auto 56px; text-align:center; }
+  .section-head h2{ font-size:clamp(26px,3vw,36px); font-weight:800; }
+  .section-head p{ margin-top:14px; color:var(--text-2); font-size:16px; }
+
+  .feature-category{ margin-bottom:52px; }
+  .feature-category:last-child{ margin-bottom:0; }
+  .feature-category h3{
+    font-size:13px; font-weight:700; text-transform:none; color:var(--text-3);
+    margin-bottom:18px; padding-inline-start:2px;
+    border-inline-start:3px solid var(--accent); padding-inline-start:12px;
+  }
+  .feature-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px; }
+  .feature-card{ padding:22px; border-radius:var(--radius-md); }
+  .feature-card h4{ font-family:'Sora',sans-serif; font-size:15.5px; font-weight:700; margin-bottom:8px; }
+  .feature-card p{ margin:0; font-size:14px; color:var(--text-2); }
+
+  /* ==========================================================
+     DOWNLOAD CTA
+     ========================================================== */
+  .download-cta{
+    max-width:1180px; margin:0 28px 100px; margin-inline:auto;
+    padding:64px 40px; text-align:center;
+    background: linear-gradient(160deg, var(--glass-bg-strong), var(--glass-bg));
+  }
+  .download-cta h2{ font-size:clamp(26px,3.2vw,38px); font-weight:800; }
+  .download-cta p{ margin:14px 0 30px; color:var(--text-2); font-size:16px; }
+
+  /* ==========================================================
+     CONNECT
+     ========================================================== */
+  .connect{ padding:0 28px 110px; max-width:1180px; margin:0 auto; }
+  .connect-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .connect-card{
+    padding:26px; display:flex; flex-direction:column; gap:14px;
+    transition: transform .2s ease;
+  }
+  .connect-card:hover{ transform:translateY(-4px); }
+  .connect-icon{
+    width:44px;height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background:var(--accent); color:var(--ink-on-accent); flex:none;
+  }
+  html[data-theme="contrast"] .connect-icon{ border:2px solid #fff; }
+  .connect-icon svg{ width:22px; height:22px; }
+  .connect-card h4{ font-family:'Sora',sans-serif; font-size:16px; font-weight:700; }
+  .connect-card p{ margin:0; font-size:13.5px; color:var(--text-2); }
+
+  /* ==========================================================
+     FOOTER
+     ========================================================== */
+  .site-footer{
+    padding:30px 28px 44px; max-width:1180px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    border-top:1px solid var(--glass-border); font-size:13px; color:var(--text-3);
+  }
+
+  /* ==========================================================
+     RESPONSIVE
+     ========================================================== */
+  @media (max-width: 900px){
+    .hero{ grid-template-columns:1fr; padding-top:120px; }
+    .hero-visual{ order:-1; height:260px; }
+    .steps-row{ grid-template-columns:1fr; }
+    .connect-grid{ grid-template-columns:1fr; }
+    .main-nav{
+      position:absolute; top:70px; inset-inline:14px; flex-direction:column; align-items:flex-start;
+      padding:18px 20px; border-radius:18px; gap:16px;
+      background:var(--glass-bg-strong); border:1px solid var(--glass-border);
+      -webkit-backdrop-filter: blur(var(--blur)); backdrop-filter: blur(var(--blur));
+      display:none;
+    }
+    .main-nav.open{ display:flex; }
+    .nav-toggle{ display:flex; align-items:center; justify-content:center; }
+  }
+  @media (max-width: 560px){
+    .wrap{ padding:0 18px; }
+    .site-header{ margin:10px 10px 0; padding:12px 16px; }
+    .controls{ gap:8px; }
+    .hero{ padding:110px 18px 50px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-decor" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="site-header glass">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 12L11 5M4 12L11 19M4 12H16M20 12a4 4 0 100-8 4 4 0 000 8zm0 12a4 4 0 100-8 4 4 0 000 8z" stroke="#15140c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">WE SHARE</span>
+      <span class="brand-by">by Answare</span>
+    </div>
+  </div>
+
+  <button class="nav-toggle glass" id="navToggle" aria-label="Menu" aria-expanded="false">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+
+  <nav class="main-nav" id="mainNav">
+    <a href="#home" data-i18n="nav.home"></a>
+    <a href="#features" data-i18n="nav.features"></a>
+    <a href="#download" data-i18n="nav.download"></a>
+    <a href="#connect" data-i18n="nav.connect"></a>
+  </nav>
+
+  <div class="controls">
+    <div class="theme-switch" role="group" aria-label="Theme">
+      <button data-theme-btn="light" aria-pressed="false" aria-label="Light theme">☀</button>
+      <button data-theme-btn="dark" aria-pressed="true" aria-label="Dark theme">●</button>
+      <button data-theme-btn="contrast" aria-pressed="false" aria-label="High contrast theme">◐</button>
+    </div>
+    <select id="langSelect" aria-label="Language">
+      <option value="en">English</option>
+      <option value="ar">العربية</option>
+      <option value="ur">اردو</option>
+      <option value="fr">Français</option>
+      <option value="de">Deutsch</option>
+      <option value="hi">हिन्दी</option>
+      <option value="zh">中文</option>
+    </select>
+  </div>
+</header>
+
+<main>
+
+  <section id="home" class="hero">
+    <div class="hero-copy">
+      <h1 id="heroTitle"></h1>
+      <p id="heroSubtitle"></p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" id="heroDownloadBtn" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-i18n="hero.ctaDownload"></span>
+        </a>
+        <a class="btn btn-ghost" id="heroYoutubeBtn" href="#" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 12s0-3.2-.4-4.7a2.9 2.9 0 00-2-2C17.9 5 12 5 12 5s-5.9 0-7.6.3a2.9 2.9 0 00-2 2C2 8.8 2 12 2 12s0 3.2.4 4.7a2.9 2.9 0 002 2C6.1 19 12 19 12 19s5.9 0 7.6-.3a2.9 2.9 0 002-2C22 15.2 22 12 22 12z" stroke="currentColor" stroke-width="1.6"/><path d="M10 9l5 3-5 3V9z" fill="currentColor"/></svg>
+          <span data-i18n="hero.ctaYoutube"></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual glass" aria-hidden="true">
+      <svg viewBox="0 0 420 320">
+        <!-- laptop -->
+        <rect x="18" y="90" width="150" height="100" rx="10" fill="none" stroke="var(--accent)" stroke-width="1.6" opacity="0.85"/>
+        <rect x="18" y="196" width="150" height="10" rx="4" fill="var(--accent)" opacity="0.5"/>
+        <rect x="34" y="106" width="118" height="68" rx="4" fill="var(--accent)" opacity="0.10"/>
+        <!-- phone -->
+        <rect x="300" y="60" width="90" height="180" rx="16" fill="none" stroke="var(--accent)" stroke-width="1.6" opacity="0.85"/>
+        <rect x="312" y="76" width="66" height="148" rx="4" fill="var(--accent)" opacity="0.10"/>
+        <!-- QR on phone -->
+        <g transform="translate(324,96)" opacity="0.9">
+          <rect x="0" y="0" width="42" height="42" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+          <rect x="4" y="4" width="10" height="10" fill="var(--accent)"/>
+          <rect x="28" y="4" width="10" height="10" fill="var(--accent)"/>
+          <rect x="4" y="28" width="10" height="10" fill="var(--accent)"/>
+          <rect x="18" y="18" width="6" height="6" fill="var(--accent)"/>
+          <rect x="28" y="28" width="6" height="6" fill="var(--accent)"/>
+        </g>
+        <!-- beam -->
+        <path class="beam-dash" d="M170 130 C 220 90, 250 170, 298 140" fill="none" stroke="var(--accent)" stroke-width="2"/>
+        <circle class="pulse-dot" cx="298" cy="140" r="5" fill="var(--accent)"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="steps">
+    <h2 id="stepsTitle"></h2>
+    <div class="steps-row" id="stepsRow"></div>
+  </section>
+
+  <section id="features" class="features">
+    <div class="section-head">
+      <h2 id="featuresTitle"></h2>
+      <p id="featuresSubtitle"></p>
+    </div>
+    <div id="featuresCategories"></div>
+  </section>
+
+  <section id="download" class="download-cta glass">
+    <h2 id="downloadTitle"></h2>
+    <p id="downloadSubtitle"></p>
+    <a class="btn btn-primary btn-lg" id="downloadCtaBtn" href="#">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="downloadCtaLabel"></span>
+    </a>
+  </section>
+
+  <section id="connect" class="connect">
+    <div class="section-head">
+      <h2 id="connectTitle"></h2>
+      <p id="connectSubtitle"></p>
+    </div>
+    <div class="connect-grid">
+      <a class="connect-card glass" id="youtubeCard" href="#" target="_blank" rel="noopener">
+        <div class="connect-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M22 12s0-3.2-.4-4.7a2.9 2.9 0 00-2-2C17.9 5 12 5 12 5s-5.9 0-7.6.3a2.9 2.9 0 00-2 2C2 8.8 2 12 2 12s0 3.2.4 4.7a2.9 2.9 0 002 2C6.1 19 12 19 12 19s5.9 0 7.6-.3a2.9 2.9 0 002-2C22 15.2 22 12 22 12z" stroke="currentColor" stroke-width="1.6"/><path d="M10 9l5 3-5 3V9z" fill="currentColor"/></svg>
+        </div>
+        <h4 id="youtubeLabel"></h4>
+        <p id="youtubeDesc"></p>
+      </a>
+      <a class="connect-card glass" id="instagramCard" href="#" target="_blank" rel="noopener">
+        <div class="connect-icon">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>
+        </div>
+        <h4 id="instagramLabel"></h4>
+        <p id="instagramDesc"></p>
+      </a>
+      <a class="connect-card glass" id="emailCard" href="#">
+        <div class="connect-icon">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 6.5L12 13l8.5-6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+        <h4 id="emailLabel"></h4>
+        <p id="emailDesc"></p>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <span>WE SHARE — Answare</span>
+  <span><span id="footerYear"></span> · <span id="footerRights"></span></span>
+</footer>
+
+<script>
+/* ============================================================================
+   EDIT THESE LINKS — this is the only block you need to change
+   ============================================================================ */
+const CONFIG = {
+  downloadUrl: "#",  // <-- put the real WE SHARE download link (.exe or page) here
+  youtubeUrl: "https://www.youtube.com/channel/UCZbRCVmyteq8q6Ks5pQDcdA",
+  instagramUrl: "#", // <-- put your Instagram profile link here
+  emailAddress: "hello@answare.com" // <-- put the real contact email here
+};
+/* ============================================================================ */
+
+const I18N = {
+  en: {
+    nav:{home:"Home",features:"Features",download:"Download",connect:"Connect"},
+    hero:{title:"Send files without the cable.",subtitle:"WE SHARE moves files between your PC and any Android or iPhone over a local WiFi link or Bluetooth — no app install, no account, no internet.",ctaDownload:"Download for Windows",ctaYoutube:"Watch on YouTube"},
+    steps:{title:"How a transfer works",items:[
+      {t:"Pick your files",d:"Choose files or a whole folder on your PC — one click starts the session."},
+      {t:"Scan the code",d:"Your phone's camera opens a simple page. No app, no sign-in, no internet needed."},
+      {t:"Files land in Downloads",d:"Everything saves straight to your phone or PC's real Downloads folder."}
+    ]},
+    features:{title:"Everything a transfer needs, nothing it doesn't",subtitle:"Four groups of features, built around one job: getting a file from one screen to another.",
+      categories:[
+        {title:"Core capabilities",items:[
+          {t:"Send & receive",d:"Two-way transfer — push files to a phone, or pull them onto the PC, in either direction."},
+          {t:"WiFi transfer",d:"A QR code opens a page on the phone over your own hotspot — no app, account, or internet required."},
+          {t:"Bluetooth transfer",d:"Android transfers hand off to Windows' native Bluetooth wizard, reliable for files up to 1.5 GB."},
+          {t:"Multi-file & folders",d:"Send several files or a whole folder at once; the phone gets one “Download all” zip."},
+          {t:"Resumable transfers",d:"A dropped connection picks back up where it left off, instead of starting over."},
+          {t:"Secure Transfer mode",d:"Require a one-time password before any file can be listed or moved on shared networks."},
+          {t:"Live progress",d:"A real-time progress bar tracks every send and receive as it happens."}
+        ]},
+        {title:"Convenience",items:[
+          {t:"Saves to Downloads",d:"Files land in your actual Windows Downloads folder, even if you've moved it."},
+          {t:"Open in Explorer",d:"Click any transferred file to open Explorer with it already selected."},
+          {t:"Set up once",d:"Language and theme are asked for on first launch only — after that, straight to the home screen."},
+          {t:"Contact links built in",d:"Website, Instagram, and About are one click away, editable from a plain config file."}
+        ]},
+        {title:"Design & accessibility",items:[
+          {t:"Three themes",d:"Light, Dark by default, and a solid High Contrast mode for low-vision users."},
+          {t:"Seven languages",d:"English, Arabic, Urdu, French, German, Hindi, and Chinese, with full right-to-left layout."},
+          {t:"Liquid glass style",d:"Frosted, translucent panels with real depth — blur, saturation, and a light-catching edge."}
+        ]},
+        {title:"Under the hood",items:[
+          {t:"Native Windows app",d:"Built with Python and a native window, packaged as one standalone .exe — nothing else to install."},
+          {t:"Fully offline interface",d:"Every font and asset is bundled locally, so the app itself never needs an internet connection."},
+          {t:"Reliable by design",d:"Bluetooth runs through Windows' own transfer wizard rather than a fragile custom rebuild."}
+        ]}
+      ]
+    },
+    download:{title:"Get WE SHARE for Windows",subtitle:"Free to use. No account. One .exe.",cta:"Download for Windows"},
+    connect:{title:"Follow along",subtitle:"See new features first and reach the team directly.",youtube:"YouTube",youtubeDesc:"Demos, updates, and behind-the-scenes.",instagram:"Instagram",instagramDesc:"Announcements and quick tips.",email:"Email",emailDesc:"Questions, feedback, or support."},
+    footer:{rights:"All rights reserved."}
+  },
+  ar: {
+    nav:{home:"الرئيسية",features:"المزايا",download:"تحميل",connect:"تواصل"},
+    hero:{title:"أرسل الملفات دون كابل.",subtitle:"يعمل WE SHARE على نقل الملفات بين حاسوبك وأي هاتف أندرويد أو آيفون عبر شبكة WiFi محلية أو بلوتوث — دون تثبيت تطبيق، أو حساب، أو إنترنت.",ctaDownload:"تحميل لويندوز",ctaYoutube:"شاهد على يوتيوب"},
+    steps:{title:"كيف تتم عملية النقل",items:[
+      {t:"اختر ملفاتك",d:"اختر ملفات أو مجلدًا كاملاً على حاسوبك — نقرة واحدة تبدأ الجلسة."},
+      {t:"امسح الرمز",d:"تفتح كاميرا هاتفك صفحة بسيطة. دون تطبيق أو تسجيل دخول أو إنترنت."},
+      {t:"تصل الملفات إلى التنزيلات",d:"يُحفظ كل شيء مباشرة في مجلد التنزيلات الفعلي على هاتفك أو حاسوبك."}
+    ]},
+    features:{title:"كل ما تحتاجه عملية النقل، ولا شيء أكثر",subtitle:"أربع مجموعات من المزايا، مبنية حول مهمة واحدة: نقل ملف من شاشة إلى أخرى.",
+      categories:[
+        {title:"المزايا الأساسية",items:[
+          {t:"الإرسال والاستقبال",d:"نقل ثنائي الاتجاه — أرسل ملفات إلى الهاتف أو اسحبها إلى الحاسوب، في أي اتجاه."},
+          {t:"النقل عبر واي فاي",d:"رمز QR يفتح صفحة على الهاتف عبر نقطة الاتصال الخاصة بك — دون تطبيق أو حساب أو إنترنت."},
+          {t:"النقل عبر البلوتوث",d:"تنتقل عمليات نقل أندرويد إلى معالج بلوتوث الأصلي في ويندوز، موثوق لملفات حتى 1.5 جيجابايت."},
+          {t:"ملفات ومجلدات متعددة",d:"أرسل عدة ملفات أو مجلدًا كاملاً دفعة واحدة؛ يحصل الهاتف على ملف مضغوط واحد «تنزيل الكل»."},
+          {t:"استئناف النقل",d:"عند انقطاع الاتصال يُستأنف النقل من حيث توقف، بدلاً من البدء من جديد."},
+          {t:"وضع النقل الآمن",d:"اطلب كلمة مرور لمرة واحدة قبل عرض أو نقل أي ملف على الشبكات المشتركة."},
+          {t:"تتبع مباشر للتقدم",d:"شريط تقدم فوري يتابع كل عملية إرسال واستقبال أثناء حدوثها."}
+        ]},
+        {title:"سهولة الاستخدام",items:[
+          {t:"الحفظ في مجلد التنزيلات",d:"تُحفظ الملفات في مجلد التنزيلات الفعلي على ويندوز، حتى لو غيّرت مكانه."},
+          {t:"فتح في مستكشف الملفات",d:"انقر على أي ملف منقول لفتح المستكشف وهو محدد مسبقًا."},
+          {t:"إعداد لمرة واحدة",d:"يُطلب اختيار اللغة والمظهر عند أول تشغيل فقط — بعدها ينتقل مباشرة إلى الشاشة الرئيسية."},
+          {t:"روابط تواصل مدمجة",d:"الموقع وإنستغرام ومعلومات عن التطبيق على بُعد نقرة واحدة، وقابلة للتعديل من ملف إعدادات بسيط."}
+        ]},
+        {title:"التصميم وإمكانية الوصول",items:[
+          {t:"ثلاثة مظاهر",d:"فاتح، وداكن كافتراضي، ووضع تباين عالٍ مخصص لضعاف البصر."},
+          {t:"سبع لغات",d:"الإنجليزية والعربية والأردية والفرنسية والألمانية والهندية والصينية، بتخطيط كامل من اليمين إلى اليسار."},
+          {t:"طابع الزجاج السائل",d:"ألواح شبه شفافة وضبابية بعمق حقيقي — تمويه وتشبع لوني وحافة عاكسة للضوء."}
+        ]},
+        {title:"خلف الكواليس",items:[
+          {t:"تطبيق ويندوز أصلي",d:"مبني بلغة بايثون ونافذة أصلية، مُعبأ في ملف exe واحد مستقل — لا شيء آخر لتثبيته."},
+          {t:"واجهة تعمل دون إنترنت بالكامل",d:"كل خط وعنصر مضمّن محليًا، لذا لا تحتاج الواجهة نفسها إلى اتصال بالإنترنت أبدًا."},
+          {t:"موثوقية بالتصميم",d:"يعمل البلوتوث عبر معالج النقل الأصلي في ويندوز بدلاً من إعادة بناء هشة مخصصة."}
+        ]}
+      ]
+    },
+    download:{title:"احصل على WE SHARE لويندوز",subtitle:"مجاني الاستخدام. دون حساب. ملف exe واحد.",cta:"تحميل لويندوز"},
+    connect:{title:"تابعنا",subtitle:"اطّلع على المزايا الجديدة أولاً وتواصل مع الفريق مباشرة.",youtube:"يوتيوب",youtubeDesc:"عروض توضيحية وتحديثات وخفايا الكواليس.",instagram:"إنستغرام",instagramDesc:"إعلانات ونصائح سريعة.",email:"البريد الإلكتروني",emailDesc:"أسئلة أو ملاحظات أو دعم."},
+    footer:{rights:"جميع الحقوق محفوظة."}
+  },
+  ur: {
+    nav:{home:"ہوم",features:"خصوصیات",download:"ڈاؤن لوڈ",connect:"رابطہ"},
+    hero:{title:"کیبل کے بغیر فائلیں بھیجیں۔",subtitle:"WE SHARE آپ کے پی سی اور کسی بھی اینڈرائیڈ یا آئی فون کے درمیان مقامی وائی فائی لنک یا بلوٹوتھ کے ذریعے فائلیں منتقل کرتا ہے — نہ ایپ انسٹال، نہ اکاؤنٹ، نہ انٹرنیٹ۔",ctaDownload:"ونڈوز کے لیے ڈاؤن لوڈ کریں",ctaYoutube:"یوٹیوب پر دیکھیں"},
+    steps:{title:"منتقلی کیسے ہوتی ہے",items:[
+      {t:"اپنی فائلیں منتخب کریں",d:"اپنے پی سی پر فائلیں یا پورا فولڈر منتخب کریں — ایک کلک سیشن شروع کر دیتا ہے۔"},
+      {t:"کوڈ اسکین کریں",d:"آپ کے فون کا کیمرہ ایک سادہ صفحہ کھولتا ہے۔ نہ ایپ، نہ لاگ ان، نہ انٹرنیٹ درکار۔"},
+      {t:"فائلیں ڈاؤن لوڈز میں پہنچ جاتی ہیں",d:"سب کچھ براہ راست آپ کے فون یا پی سی کے اصل ڈاؤن لوڈز فولڈر میں محفوظ ہوتا ہے۔"}
+    ]},
+    features:{title:"منتقلی کے لیے جو کچھ درکار ہے، بس وہی",subtitle:"خصوصیات کے چار گروپ، ایک ہی مقصد کے گرد بنائے گئے: ایک اسکرین سے دوسری تک فائل پہنچانا۔",
+      categories:[
+        {title:"بنیادی صلاحیتیں",items:[
+          {t:"بھیجنا اور وصول کرنا",d:"دو طرفہ منتقلی — فون پر فائلیں بھیجیں یا انہیں پی سی پر منگوائیں، کسی بھی سمت میں۔"},
+          {t:"وائی فائی کے ذریعے منتقلی",d:"ایک QR کوڈ آپ کے ہاٹ اسپاٹ کے ذریعے فون پر ایک صفحہ کھولتا ہے — نہ ایپ، نہ اکاؤنٹ، نہ انٹرنیٹ۔"},
+          {t:"بلوٹوتھ کے ذریعے منتقلی",d:"اینڈرائیڈ منتقلیاں ونڈوز کے مقامی بلوٹوتھ وزرڈ کے سپرد کی جاتی ہیں، 1.5 جی بی تک قابل اعتماد۔"},
+          {t:"متعدد فائلیں اور فولڈرز",d:"ایک ساتھ کئی فائلیں یا پورا فولڈر بھیجیں؛ فون کو ایک ہی «سب ڈاؤن لوڈ کریں» زپ ملتی ہے۔"},
+          {t:"دوبارہ شروع ہونے والی منتقلی",d:"کنکشن منقطع ہونے پر منتقلی وہیں سے دوبارہ شروع ہوتی ہے، نئے سرے سے نہیں۔"},
+          {t:"محفوظ منتقلی موڈ",d:"مشترکہ نیٹ ورکس پر کسی بھی فائل کو دیکھنے یا منتقل کرنے سے پہلے ایک بار کا پاس ورڈ درکار ہو۔"},
+          {t:"براہ راست پیش رفت",d:"ایک فوری پیش رفت بار ہر بھیجنے اور وصول کرنے کے عمل کو ٹریک کرتا ہے۔"}
+        ]},
+        {title:"سہولت",items:[
+          {t:"خودکار طور پر ڈاؤن لوڈز میں محفوظ",d:"فائلیں آپ کے اصل ونڈوز ڈاؤن لوڈز فولڈر میں محفوظ ہوتی ہیں، چاہے آپ نے اسے منتقل کیا ہو۔"},
+          {t:"ایکسپلورر میں کھولیں",d:"کسی بھی منتقل شدہ فائل پر کلک کریں تاکہ ایکسپلورر پہلے سے منتخب شدہ فائل کے ساتھ کھلے۔"},
+          {t:"صرف ایک بار سیٹ اپ",d:"زبان اور تھیم صرف پہلی بار چلانے پر پوچھی جاتی ہے — اس کے بعد براہ راست ہوم اسکرین۔"},
+          {t:"شامل رابطہ لنکس",d:"ویب سائٹ، انسٹاگرام، اور تعارف ایک کلک کی دوری پر ہیں، ایک سادہ کنفیگ فائل سے قابل ترمیم۔"}
+        ]},
+        {title:"ڈیزائن اور رسائی",items:[
+          {t:"تین تھیمز",d:"لائٹ، ڈارک بطور ڈیفالٹ، اور کم بینائی والے صارفین کے لیے ایک ہائی کنٹراسٹ موڈ۔"},
+          {t:"سات زبانیں",d:"انگریزی، عربی، اردو، فرانسیسی، جرمن، ہندی، اور چینی، مکمل رائٹ ٹو لیفٹ لے آؤٹ کے ساتھ۔"},
+          {t:"لیکوئیڈ گلاس انداز",d:"دھندلے، نیم شفاف پینلز حقیقی گہرائی کے ساتھ — بلر، سیچوریشن، اور روشنی پکڑنے والا کنارہ۔"}
+        ]},
+        {title:"پس پردہ ٹیکنالوجی",items:[
+          {t:"مقامی ونڈوز ایپ",d:"پائتھون اور ایک مقامی ونڈو کے ساتھ بنایا گیا، ایک آزاد exe فائل کے طور پر پیک کیا گیا — کچھ اور انسٹال کرنے کی ضرورت نہیں۔"},
+          {t:"مکمل طور پر آف لائن انٹرفیس",d:"ہر فونٹ اور اثاثہ مقامی طور پر شامل ہے، اس لیے ایپ کے انٹرفیس کو کبھی انٹرنیٹ کی ضرورت نہیں۔"},
+          {t:"ڈیزائن کے لحاظ سے قابل اعتماد",d:"بلوٹوتھ ونڈوز کے اپنے منتقلی وزرڈ کے ذریعے چلتا ہے بجائے ایک نازک اپنی تعمیر کے۔"}
+        ]}
+      ]
+    },
+    download:{title:"ونڈوز کے لیے WE SHARE حاصل کریں",subtitle:"استعمال مفت۔ کوئی اکاؤنٹ نہیں۔ ایک ہی exe فائل۔",cta:"ونڈوز کے لیے ڈاؤن لوڈ کریں"},
+    connect:{title:"ساتھ جڑے رہیں",subtitle:"نئی خصوصیات سب سے پہلے دیکھیں اور ٹیم سے براہ راست رابطہ کریں۔",youtube:"یوٹیوب",youtubeDesc:"ڈیمو، اپڈیٹس، اور پردے کے پیچھے کی جھلکیاں۔",instagram:"انسٹاگرام",instagramDesc:"اعلانات اور فوری تجاویز۔",email:"ای میل",emailDesc:"سوالات، رائے، یا مدد۔"},
+    footer:{rights:"جملہ حقوق محفوظ ہیں۔"}
+  },
+  fr: {
+    nav:{home:"Accueil",features:"Fonctionnalités",download:"Télécharger",connect:"Contact"},
+    hero:{title:"Envoyez des fichiers sans câble.",subtitle:"WE SHARE transfère des fichiers entre votre PC et n'importe quel Android ou iPhone via un lien WiFi local ou le Bluetooth — sans application, sans compte, sans internet.",ctaDownload:"Télécharger pour Windows",ctaYoutube:"Voir sur YouTube"},
+    steps:{title:"Comment se déroule un transfert",items:[
+      {t:"Choisissez vos fichiers",d:"Sélectionnez des fichiers ou un dossier entier sur votre PC — un clic lance la session."},
+      {t:"Scannez le code",d:"L'appareil photo du téléphone ouvre une simple page. Aucune application, connexion ou internet requis."},
+      {t:"Les fichiers arrivent dans Téléchargements",d:"Tout est enregistré directement dans le vrai dossier Téléchargements du téléphone ou du PC."}
+    ]},
+    features:{title:"Tout ce qu'un transfert exige, rien de plus",subtitle:"Quatre groupes de fonctionnalités, construits autour d'une seule tâche : faire passer un fichier d'un écran à l'autre.",
+      categories:[
+        {title:"Fonctionnalités essentielles",items:[
+          {t:"Envoi et réception",d:"Transfert bidirectionnel — envoyez des fichiers vers un téléphone ou récupérez-les sur le PC, dans les deux sens."},
+          {t:"Transfert WiFi",d:"Un code QR ouvre une page sur le téléphone via votre propre point d'accès — sans application, compte ni internet."},
+          {t:"Transfert Bluetooth",d:"Les transferts Android passent par l'assistant Bluetooth natif de Windows, fiable jusqu'à 1,5 Go."},
+          {t:"Fichiers et dossiers multiples",d:"Envoyez plusieurs fichiers ou un dossier entier ; le téléphone reçoit un seul zip « Tout télécharger »."},
+          {t:"Transferts reprenables",d:"Une connexion interrompue reprend là où elle s'est arrêtée, au lieu de tout recommencer."},
+          {t:"Mode de transfert sécurisé",d:"Exigez un mot de passe à usage unique avant qu'un fichier puisse être listé ou déplacé sur un réseau partagé."},
+          {t:"Suivi en direct",d:"Une barre de progression en temps réel suit chaque envoi et réception."}
+        ]},
+        {title:"Praticité",items:[
+          {t:"Enregistrement automatique",d:"Les fichiers arrivent dans votre vrai dossier Téléchargements Windows, même déplacé."},
+          {t:"Ouvrir dans l'Explorateur",d:"Cliquez sur un fichier transféré pour ouvrir l'Explorateur avec celui-ci déjà sélectionné."},
+          {t:"Configuration unique",d:"La langue et le thème ne sont demandés qu'au premier lancement — ensuite, direct à l'accueil."},
+          {t:"Liens de contact intégrés",d:"Le site, Instagram et les infos sur l'app sont à un clic, modifiables depuis un simple fichier de configuration."}
+        ]},
+        {title:"Design et accessibilité",items:[
+          {t:"Trois thèmes",d:"Clair, Sombre par défaut, et un mode Contraste élevé pour les malvoyants."},
+          {t:"Sept langues",d:"Anglais, arabe, ourdou, français, allemand, hindi et chinois, avec mise en page droite à gauche complète."},
+          {t:"Style verre liquide",d:"Des panneaux dépolis et translucides avec une vraie profondeur — flou, saturation et un bord qui capte la lumière."}
+        ]},
+        {title:"Sous le capot",items:[
+          {t:"Application Windows native",d:"Construite avec Python et une fenêtre native, empaquetée en un seul .exe autonome — rien d'autre à installer."},
+          {t:"Interface entièrement hors ligne",d:"Chaque police et chaque ressource est intégrée localement, donc l'interface n'a jamais besoin d'internet."},
+          {t:"Fiable par conception",d:"Le Bluetooth passe par l'assistant de transfert natif de Windows plutôt qu'une réimplémentation fragile."}
+        ]}
+      ]
+    },
+    download:{title:"Obtenez WE SHARE pour Windows",subtitle:"Gratuit. Sans compte. Un seul .exe.",cta:"Télécharger pour Windows"},
+    connect:{title:"Suivez-nous",subtitle:"Découvrez les nouveautés en premier et contactez l'équipe directement.",youtube:"YouTube",youtubeDesc:"Démos, mises à jour et coulisses.",instagram:"Instagram",instagramDesc:"Annonces et astuces rapides.",email:"E-mail",emailDesc:"Questions, retours ou support."},
+    footer:{rights:"Tous droits réservés."}
+  },
+  de: {
+    nav:{home:"Start",features:"Funktionen",download:"Download",connect:"Kontakt"},
+    hero:{title:"Dateien senden, ganz ohne Kabel.",subtitle:"WE SHARE überträgt Dateien zwischen Ihrem PC und jedem Android- oder iPhone-Gerät über eine lokale WLAN-Verbindung oder Bluetooth — ohne App-Installation, ohne Konto, ohne Internet.",ctaDownload:"Für Windows herunterladen",ctaYoutube:"Auf YouTube ansehen"},
+    steps:{title:"So läuft eine Übertragung ab",items:[
+      {t:"Dateien auswählen",d:"Wählen Sie Dateien oder einen ganzen Ordner auf Ihrem PC — ein Klick startet die Sitzung."},
+      {t:"Code scannen",d:"Die Handykamera öffnet eine einfache Seite. Keine App, keine Anmeldung, kein Internet nötig."},
+      {t:"Dateien landen in Downloads",d:"Alles wird direkt im echten Downloads-Ordner von Telefon oder PC gespeichert."}
+    ]},
+    features:{title:"Alles, was eine Übertragung braucht — nicht mehr",subtitle:"Vier Funktionsgruppen, aufgebaut um eine Aufgabe: eine Datei von einem Bildschirm zum anderen zu bringen.",
+      categories:[
+        {title:"Kernfunktionen",items:[
+          {t:"Senden & Empfangen",d:"Übertragung in beide Richtungen — Dateien ans Handy schicken oder auf den PC holen."},
+          {t:"WLAN-Übertragung",d:"Ein QR-Code öffnet über Ihren eigenen Hotspot eine Seite auf dem Handy — ohne App, Konto oder Internet."},
+          {t:"Bluetooth-Übertragung",d:"Android-Übertragungen laufen über den nativen Bluetooth-Assistenten von Windows, zuverlässig bis 1,5 GB."},
+          {t:"Mehrere Dateien & Ordner",d:"Mehrere Dateien oder einen ganzen Ordner gleichzeitig senden; das Handy erhält ein einziges „Alles herunterladen“-Zip."},
+          {t:"Fortsetzbare Übertragungen",d:"Eine unterbrochene Verbindung setzt genau dort fort, statt von vorn zu beginnen."},
+          {t:"Sicherer Übertragungsmodus",d:"Ein Einmalpasswort verlangen, bevor Dateien in gemeinsamen Netzwerken angezeigt oder verschoben werden können."},
+          {t:"Live-Fortschritt",d:"Ein Echtzeit-Fortschrittsbalken verfolgt jeden Sende- und Empfangsvorgang."}
+        ]},
+        {title:"Komfort",items:[
+          {t:"Automatisch in Downloads",d:"Dateien landen im echten Windows-Downloads-Ordner, selbst wenn Sie ihn verschoben haben."},
+          {t:"Im Explorer öffnen",d:"Klicken Sie auf eine übertragene Datei, um den Explorer mit bereits ausgewählter Datei zu öffnen."},
+          {t:"Einrichtung nur einmal",d:"Sprache und Design werden nur beim ersten Start abgefragt — danach geht es direkt zum Startbildschirm."},
+          {t:"Eingebaute Kontaktlinks",d:"Website, Instagram und Info sind einen Klick entfernt und über eine einfache Konfigurationsdatei anpassbar."}
+        ]},
+        {title:"Design & Barrierefreiheit",items:[
+          {t:"Drei Designs",d:"Hell, Dunkel als Standard und ein solider Hochkontrastmodus für sehbehinderte Nutzer."},
+          {t:"Sieben Sprachen",d:"Englisch, Arabisch, Urdu, Französisch, Deutsch, Hindi und Chinesisch, mit vollständigem Rechts-nach-links-Layout."},
+          {t:"Liquid-Glass-Stil",d:"Mattierte, durchscheinende Flächen mit echter Tiefe — Unschärfe, Sättigung und eine lichtreflektierende Kante."}
+        ]},
+        {title:"Unter der Haube",items:[
+          {t:"Native Windows-App",d:"Mit Python und einem nativen Fenster gebaut, verpackt als eine einzige eigenständige .exe — sonst nichts zu installieren."},
+          {t:"Vollständig offline-fähige Oberfläche",d:"Jede Schrift und jede Ressource ist lokal eingebettet, sodass die Oberfläche nie eine Internetverbindung braucht."},
+          {t:"Zuverlässig durch Design",d:"Bluetooth läuft über den eigenen Übertragungsassistenten von Windows statt über eine fragile Eigenentwicklung."}
+        ]}
+      ]
+    },
+    download:{title:"WE SHARE für Windows holen",subtitle:"Kostenlos. Kein Konto. Eine einzige .exe.",cta:"Für Windows herunterladen"},
+    connect:{title:"Bleiben Sie dran",subtitle:"Neue Funktionen zuerst sehen und das Team direkt erreichen.",youtube:"YouTube",youtubeDesc:"Demos, Updates und Blicke hinter die Kulissen.",instagram:"Instagram",instagramDesc:"Ankündigungen und schnelle Tipps.",email:"E-Mail",emailDesc:"Fragen, Feedback oder Support."},
+    footer:{rights:"Alle Rechte vorbehalten."}
+  },
+  hi: {
+    nav:{home:"होम",features:"विशेषताएं",download:"डाउनलोड",connect:"संपर्क"},
+    hero:{title:"बिना केबल के फ़ाइलें भेजें।",subtitle:"WE SHARE आपके पीसी और किसी भी एंड्रॉइड या आईफ़ोन के बीच लोकल वाई-फाई लिंक या ब्लूटूथ के ज़रिए फ़ाइलें ट्रांसफ़र करता है — बिना ऐप इंस्टॉल किए, बिना अकाउंट, बिना इंटरनेट।",ctaDownload:"विंडोज़ के लिए डाउनलोड करें",ctaYoutube:"यूट्यूब पर देखें"},
+    steps:{title:"ट्रांसफ़र कैसे होता है",items:[
+      {t:"अपनी फ़ाइलें चुनें",d:"अपने पीसी पर फ़ाइलें या पूरा फ़ोल्डर चुनें — एक क्लिक से सेशन शुरू हो जाता है।"},
+      {t:"कोड स्कैन करें",d:"आपके फ़ोन का कैमरा एक सरल पेज खोलता है। न ऐप, न लॉगिन, न इंटरनेट की ज़रूरत।"},
+      {t:"फ़ाइलें डाउनलोड्स में पहुँच जाती हैं",d:"सब कुछ सीधे आपके फ़ोन या पीसी के असली डाउनलोड्स फ़ोल्डर में सेव होता है।"}
+    ]},
+    features:{title:"ट्रांसफ़र के लिए जो चाहिए, बस वही",subtitle:"एक ही काम के इर्द-गिर्द बनी विशेषताओं के चार समूह: एक स्क्रीन से दूसरी तक फ़ाइल पहुँचाना।",
+      categories:[
+        {title:"मुख्य क्षमताएं",items:[
+          {t:"भेजना और प्राप्त करना",d:"दोतरफ़ा ट्रांसफ़र — फ़ोन पर फ़ाइलें भेजें या उन्हें पीसी पर मंगवाएं, किसी भी दिशा में।"},
+          {t:"वाई-फाई ट्रांसफ़र",d:"एक QR कोड आपके हॉटस्पॉट के ज़रिए फ़ोन पर एक पेज खोलता है — बिना ऐप, अकाउंट या इंटरनेट।"},
+          {t:"ब्लूटूथ ट्रांसफ़र",d:"एंड्रॉइड ट्रांसफ़र विंडोज़ के नेटिव ब्लूटूथ विज़ार्ड से होते हैं, 1.5 जीबी तक भरोसेमंद।"},
+          {t:"कई फ़ाइलें और फ़ोल्डर",d:"कई फ़ाइलें या पूरा फ़ोल्डर एक साथ भेजें; फ़ोन को एक ही «सभी डाउनलोड करें» ज़िप मिलती है।"},
+          {t:"फिर से शुरू होने वाला ट्रांसफ़र",d:"कनेक्शन टूटने पर ट्रांसफ़र वहीं से फिर शुरू होता है, नए सिरे से नहीं।"},
+          {t:"सुरक्षित ट्रांसफ़र मोड",d:"साझा नेटवर्क पर किसी भी फ़ाइल को देखने या भेजने से पहले एक बार का पासवर्ड ज़रूरी बनाएं।"},
+          {t:"लाइव प्रगति",d:"एक रीयल-टाइम प्रोग्रेस बार हर भेजने और प्राप्त करने की प्रक्रिया को ट्रैक करता है।"}
+        ]},
+        {title:"सुविधा",items:[
+          {t:"डाउनलोड्स में अपने आप सेव",d:"फ़ाइलें आपके असली विंडोज़ डाउनलोड्स फ़ोल्डर में सेव होती हैं, भले ही आपने उसे कहीं और ले जाया हो।"},
+          {t:"एक्सप्लोरर में खोलें",d:"किसी भी ट्रांसफ़र की गई फ़ाइल पर क्लिक करें ताकि एक्सप्लोरर उसे पहले से चुना हुआ खोले।"},
+          {t:"सिर्फ़ एक बार सेटअप",d:"भाषा और थीम केवल पहली बार शुरू करने पर पूछी जाती है — उसके बाद सीधे होम स्क्रीन।"},
+          {t:"जुड़े हुए संपर्क लिंक",d:"वेबसाइट, इंस्टाग्राम और ऐप की जानकारी एक क्लिक दूर है, एक सादी कॉन्फ़िग फ़ाइल से बदली जा सकती है।"}
+        ]},
+        {title:"डिज़ाइन और सुगमता",items:[
+          {t:"तीन थीम",d:"लाइट, डिफ़ॉल्ट रूप से डार्क, और कम दृष्टि वाले उपयोगकर्ताओं के लिए एक हाई कॉन्ट्रास्ट मोड।"},
+          {t:"सात भाषाएं",d:"अंग्रेज़ी, अरबी, उर्दू, फ़्रेंच, जर्मन, हिंदी और चीनी, पूरी दाएं-से-बाएं लेआउट के साथ।"},
+          {t:"लिक्विड ग्लास शैली",d:"धुंधले, पारभासी पैनल असली गहराई के साथ — ब्लर, सैचुरेशन, और रोशनी पकड़ता किनारा।"}
+        ]},
+        {title:"पर्दे के पीछे",items:[
+          {t:"नेटिव विंडोज़ ऐप",d:"पायथन और एक नेटिव विंडो से बना, एक स्वतंत्र .exe के रूप में पैक किया गया — कुछ और इंस्टॉल करने की ज़रूरत नहीं।"},
+          {t:"पूरी तरह ऑफ़लाइन इंटरफ़ेस",d:"हर फ़ॉन्ट और एसेट स्थानीय रूप से शामिल है, इसलिए इंटरफ़ेस को कभी इंटरनेट की ज़रूरत नहीं पड़ती।"},
+          {t:"डिज़ाइन से भरोसेमंद",d:"ब्लूटूथ विंडोज़ के अपने ट्रांसफ़र विज़ार्ड से चलता है, न कि किसी कमज़ोर कस्टम निर्माण से।"}
+        ]}
+      ]
+    },
+    download:{title:"विंडोज़ के लिए WE SHARE पाएं",subtitle:"उपयोग मुफ़्त। कोई अकाउंट नहीं। एक ही .exe।",cta:"विंडोज़ के लिए डाउनलोड करें"},
+    connect:{title:"जुड़े रहें",subtitle:"नई विशेषताएं सबसे पहले देखें और टीम से सीधे संपर्क करें।",youtube:"यूट्यूब",youtubeDesc:"डेमो, अपडेट और पर्दे के पीछे की झलकियां।",instagram:"इंस्टाग्राम",instagramDesc:"घोषणाएं और त्वरित सुझाव।",email:"ईमेल",emailDesc:"सवाल, फ़ीडबैक या सहायता।"},
+    footer:{rights:"सर्वाधिकार सुरक्षित।"}
+  },
+  zh: {
+    nav:{home:"首页",features:"功能",download:"下载",connect:"联系我们"},
+    hero:{title:"无需数据线，随心传输文件。",subtitle:"WE SHARE 通过本地 WiFi 链接或蓝牙，在您的电脑与任意安卓或 iPhone 手机之间传输文件——无需安装应用，无需账号，无需联网。",ctaDownload:"下载 Windows 版",ctaYoutube:"在 YouTube 观看"},
+    steps:{title:"传输是如何进行的",items:[
+      {t:"选择文件",d:"在电脑上选择文件或整个文件夹——点击一下即可开始。"},
+      {t:"扫描二维码",d:"手机摄像头会打开一个简单的网页，无需应用、登录或联网。"},
+      {t:"文件保存到下载文件夹",d:"所有文件都会直接保存到手机或电脑真正的下载文件夹中。"}
+    ]},
+    features:{title:"传输所需的一切，仅此而已",subtitle:"四组功能，围绕同一个任务打造：把文件从一个屏幕送到另一个屏幕。",
+      categories:[
+        {title:"核心功能",items:[
+          {t:"发送与接收",d:"双向传输——可将文件发送到手机，也可从手机接收到电脑，方向随意。"},
+          {t:"WiFi 传输",d:"二维码通过您自己的热点在手机上打开网页——无需应用、账号或联网。"},
+          {t:"蓝牙传输",d:"安卓设备的传输交由 Windows 自带的蓝牙向导处理，最大可靠支持 1.5 GB 的文件。"},
+          {t:"多文件与文件夹",d:"一次发送多个文件或整个文件夹；手机端只需一次“全部下载”即可打包获取。"},
+          {t:"断点续传",d:"连接中断后会从中断处继续，而不是从头开始。"},
+          {t:"安全传输模式",d:"在共享网络上，可要求输入一次性密码后才能查看或传输文件。"},
+          {t:"实时进度",d:"实时进度条会跟踪每一次发送与接收的过程。"}
+        ]},
+        {title:"便利功能",items:[
+          {t:"自动保存到下载文件夹",d:"文件会保存到 Windows 真正的下载文件夹，即使您已更改过其位置。"},
+          {t:"在资源管理器中打开",d:"点击任意已传输的文件，即可在资源管理器中直接定位到它。"},
+          {t:"仅需设置一次",d:"语言和主题只在首次启动时询问一次，此后直接进入主界面。"},
+          {t:"内置联系方式",d:"官网、Instagram 与关于信息只需一键即达，可通过简单的配置文件修改。"}
+        ]},
+        {title:"设计与无障碍",items:[
+          {t:"三种主题",d:"浅色、默认深色，以及为视力不佳用户设计的高对比度模式。"},
+          {t:"七种语言",d:"英语、阿拉伯语、乌尔都语、法语、德语、印地语和中文，完整支持从右到左布局。"},
+          {t:"液态玻璃风格",d:"磨砂半透明面板带来真实的层次感——模糊、饱和度与反光边缘。"}
+        ]},
+        {title:"技术细节",items:[
+          {t:"原生 Windows 应用",d:"使用 Python 构建并配有原生窗口，打包为单个独立 .exe 文件——无需安装其他任何东西。"},
+          {t:"完全离线的界面",d:"所有字体与资源均已本地内置，因此界面本身永远不需要联网。"},
+          {t:"设计上的可靠性",d:"蓝牙功能通过 Windows 自带的传输向导运行，而非脆弱的自建实现。"}
+        ]}
+      ]
+    },
+    download:{title:"获取 Windows 版 WE SHARE",subtitle:"免费使用，无需账号，仅需一个 .exe 文件。",cta:"下载 Windows 版"},
+    connect:{title:"关注我们",subtitle:"第一时间了解新功能，直接联系团队。",youtube:"YouTube",youtubeDesc:"演示、更新与幕后花絮。",instagram:"Instagram",instagramDesc:"公告与快速小贴士。",email:"邮箱",emailDesc:"问题、反馈或支持。"},
+    footer:{rights:"版权所有，保留一切权利。"}
+  }
+};
+
+const RTL_LANGS = ["ar","ur"];
+const STORAGE_LANG = "weshare_lang";
+const STORAGE_THEME = "weshare_theme";
+
+function applyConfig(){
+  document.getElementById("heroDownloadBtn").href = CONFIG.downloadUrl;
+  document.getElementById("downloadCtaBtn").href = CONFIG.downloadUrl;
+  document.getElementById("heroYoutubeBtn").href = CONFIG.youtubeUrl;
+  document.getElementById("youtubeCard").href = CONFIG.youtubeUrl;
+  document.getElementById("instagramCard").href = CONFIG.instagramUrl;
+  document.getElementById("emailCard").href = "mailto:" + CONFIG.emailAddress;
+}
+
+function renderFeatureCategories(list){
+  const host = document.getElementById("featuresCategories");
+  host.innerHTML = "";
+  list.forEach(cat=>{
+    const section = document.createElement("div");
+    section.className = "feature-category";
+    const h3 = document.createElement("h3");
+    h3.textContent = cat.title;
+    const grid = document.createElement("div");
+    grid.className = "feature-grid";
+    cat.items.forEach(item=>{
+      const card = document.createElement("div");
+      card.className = "feature-card glass";
+      const h4 = document.createElement("h4");
+      h4.textContent = item.t;
+      const p = document.createElement("p");
+      p.textContent = item.d;
+      card.appendChild(h4);
+      card.appendChild(p);
+      grid.appendChild(card);
+    });
+    section.appendChild(h3);
+    section.appendChild(grid);
+    host.appendChild(section);
+  });
+}
+
+function renderSteps(list){
+  const host = document.getElementById("stepsRow");
+  host.innerHTML = "";
+  list.forEach((item,i)=>{
+    const card = document.createElement("div");
+    card.className = "step-card glass";
+    card.innerHTML = '<div class="step-num">' + (i+1) + '</div><h3></h3><p></p>';
+    card.querySelector("h3").textContent = item.t;
+    card.querySelector("p").textContent = item.d;
+    host.appendChild(card);
+  });
+}
+
+function setLanguage(lang){
+  const dict = I18N[lang] || I18N.en;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = RTL_LANGS.includes(lang) ? "rtl" : "ltr";
+  document.getElementById("langSelect").value = lang;
+
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const path = el.getAttribute("data-i18n").split(".");
+    let val = dict;
+    path.forEach(p=>{ val = val ? val[p] : null; });
+    if (val) el.textContent = val;
+  });
+
+  document.getElementById("heroTitle").textContent = dict.hero.title;
+  document.getElementById("heroSubtitle").textContent = dict.hero.subtitle;
+  document.getElementById("stepsTitle").textContent = dict.steps.title;
+  renderSteps(dict.steps.items);
+
+  document.getElementById("featuresTitle").textContent = dict.features.title;
+  document.getElementById("featuresSubtitle").textContent = dict.features.subtitle;
+  renderFeatureCategories(dict.features.categories);
+
+  document.getElementById("downloadTitle").textContent = dict.download.title;
+  document.getElementById("downloadSubtitle").textContent = dict.download.subtitle;
+  document.getElementById("downloadCtaLabel").textContent = dict.download.cta;
+
+  document.getElementById("connectTitle").textContent = dict.connect.title;
+  document.getElementById("connectSubtitle").textContent = dict.connect.subtitle;
+  document.getElementById("youtubeLabel").textContent = dict.connect.youtube;
+  document.getElementById("youtubeDesc").textContent = dict.connect.youtubeDesc;
+  document.getElementById("instagramLabel").textContent = dict.connect.instagram;
+  document.getElementById("instagramDesc").textContent = dict.connect.instagramDesc;
+  document.getElementById("emailLabel").textContent = dict.connect.email;
+  document.getElementById("emailDesc").textContent = dict.connect.emailDesc;
+
+  document.getElementById("footerRights").textContent = dict.footer.rights;
+
+  try{ localStorage.setItem(STORAGE_LANG, lang); }catch(e){}
+}
+
+function setTheme(theme){
+  document.documentElement.setAttribute("data-theme", theme);
+  document.querySelectorAll("[data-theme-btn]").forEach(btn=>{
+    btn.setAttribute("aria-pressed", btn.getAttribute("data-theme-btn") === theme ? "true" : "false");
+  });
+  try{ localStorage.setItem(STORAGE_THEME, theme); }catch(e){}
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+  document.getElementById("footerYear").textContent = "© " + new Date().getFullYear();
+  applyConfig();
+
+  let savedLang = "en", savedTheme = "dark";
+  try{
+    savedLang = localStorage.getItem(STORAGE_LANG) || (I18N[navigator.language?.slice(0,2)] ? navigator.language.slice(0,2) : "en");
+    savedTheme = localStorage.getItem(STORAGE_THEME) || "dark";
+  }catch(e){}
+
+  setLanguage(I18N[savedLang] ? savedLang : "en");
+  setTheme(savedTheme);
+
+  document.getElementById("langSelect").addEventListener("change", e=> setLanguage(e.target.value));
+  document.querySelectorAll("[data-theme-btn]").forEach(btn=>{
+    btn.addEventListener("click", ()=> setTheme(btn.getAttribute("data-theme-btn")));
+  });
+
+  const navToggle = document.getElementById("navToggle");
+  const mainNav = document.getElementById("mainNav");
+  navToggle.addEventListener("click", ()=>{
+    const open = mainNav.classList.toggle("open");
+    navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  mainNav.querySelectorAll("a").forEach(a=> a.addEventListener("click", ()=>{
+    mainNav.classList.remove("open");
+    navToggle.setAttribute("aria-expanded","false");
+  }));
+});
+</script>
+</body>
+</html>
